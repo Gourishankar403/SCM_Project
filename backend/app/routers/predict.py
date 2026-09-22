@@ -1,48 +1,47 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from ..database import get_db
-from ..models.db_models import Company, RequestLog
-from ..models.schemas import RequestAnalyze, RequestLogResponse
-from ..ml_agent import threat_analyzer
+from ..models.schemas import RequestPayload
+from ..models.db_models import RequestLog, Company
+from ..agents.orchestrator import orchestrator_app
 
 router = APIRouter(prefix="/analyze", tags=["analyze"])
 
-@router.post("/", response_model=RequestLogResponse)
-def analyze_incoming_request(req: RequestAnalyze, db: Session = Depends(get_db)):
-    # 1. Identify Company by domain
-    company = db.query(Company).filter(Company.domain == req.company_domain).first()
+@router.post("/")
+def analyze_request(payload: RequestPayload, db: Session = Depends(get_db)):
+    # Find company by domain
+    company = db.query(Company).filter(Company.domain == payload.company_domain).first()
     if not company:
-        raise HTTPException(status_code=404, detail="Company domain not registered in SentinelAI")
-        
-    # 2. Run LangGraph ML prediction
-    initial_state = {
-        "method": req.method,
-        "url": req.url,
-        "user_agent": req.user_agent,
-        "payload": req.payload,
-        "combined_text": "",
-        "is_attack": False,
-        "confidence": 0.0
+        raise HTTPException(status_code=404, detail="Company domain not registered")
+
+    # Run through the SentinelAI Orchestrator Pipeline
+    state = {
+        "method": payload.method,
+        "url": payload.url,
+        "payload": payload.payload,
+        "user_agent": payload.user_agent,
+        "company_domain": payload.company_domain,
     }
     
-    result = threat_analyzer.invoke(initial_state)
+    final_state = orchestrator_app.invoke(state)
+    is_attack = final_state.get("is_attack", False)
     
-    is_attack = result.get("is_attack", False)
-    confidence = result.get("confidence", 0.0)
-    
-    # 3. Log to DB
-    new_log = RequestLog(
+    # Log it
+    log_entry = RequestLog(
         company_id=company.id,
-        method=req.method,
-        url=req.url,
-        user_agent=req.user_agent,
-        payload=req.payload,
+        method=payload.method,
+        url=payload.url,
+        user_agent=payload.user_agent,
+        payload=payload.payload,
         is_attack=is_attack,
-        confidence=confidence
+        confidence=0.99  # Mock confidence for now
     )
-    
-    db.add(new_log)
+    db.add(log_entry)
     db.commit()
-    db.refresh(new_log)
-    
-    return new_log
+    db.refresh(log_entry)
+
+    return {
+        "status": "analyzed", 
+        "is_attack": is_attack, 
+        "incident_report": final_state.get("incident_report")
+    }
