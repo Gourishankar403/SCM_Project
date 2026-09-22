@@ -15,7 +15,7 @@ class TokenData(BaseModel):
     role: Optional[str] = None
     company_id: Optional[int] = None
 
-class RequestAnalyze(BaseModel):
+class RequestPayload(BaseModel):
     method: str
     url: str
     user_agent: str

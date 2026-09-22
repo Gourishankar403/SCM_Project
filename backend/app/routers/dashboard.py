@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from typing import List, Dict, Optional
@@ -8,11 +9,27 @@ from ..auth import get_current_user
 
 router = APIRouter(prefix="/dashboard", tags=["dashboard"])
 
+class PermissionToggle(BaseModel):
+    allow_provider: bool
+
+@router.post("/permissions")
+def toggle_permissions(payload: PermissionToggle, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    if current_user.role != "CLIENT":
+        raise HTTPException(status_code=403, detail="Only clients can toggle permissions")
+    
+    company = db.query(Company).filter(Company.id == current_user.company_id).first()
+    company.provider_access_granted = payload.allow_provider
+    db.commit()
+    return {"status": "success", "provider_access_granted": company.provider_access_granted}
+
 @router.get("/stats")
 def get_dashboard_stats(client_id: Optional[int] = None, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
     
     # If Provider is drilling down into a specific client
     if current_user.role == "PROVIDER" and client_id is not None:
+        target_company = db.query(Company).filter(Company.id == client_id).first()
+        if not target_company or not target_company.provider_access_granted:
+            raise HTTPException(status_code=403, detail="Access denied by client")
         target_company_id = client_id
     elif current_user.role == "CLIENT":
         target_company_id = current_user.company_id
@@ -22,7 +39,6 @@ def get_dashboard_stats(client_id: Optional[int] = None, current_user: User = De
         target_company_id = None
 
     if target_company_id:
-        # Client Specific View (Used by both Client and drilling-down Admin)
         company = db.query(Company).filter(Company.id == target_company_id).first()
         if not company:
             raise HTTPException(status_code=404, detail="Company not found")
@@ -36,6 +52,7 @@ def get_dashboard_stats(client_id: Optional[int] = None, current_user: User = De
             "role": "CLIENT_VIEW", 
             "company_name": company.name,
             "company_domain": company.domain,
+            "provider_access_granted": company.provider_access_granted,
             "stats": {
                 "total_requests": total_requests,
                 "total_attacks": total_attacks,
@@ -52,8 +69,11 @@ def get_dashboard_stats(client_id: Optional[int] = None, current_user: User = De
     
     # Global Provider View
     if current_user.role == "PROVIDER":
-        total_requests = db.query(RequestLog).count()
-        total_attacks = db.query(RequestLog).filter(RequestLog.is_attack == True).count()
+        # Only include companies that have granted access
+        accessible_companies = db.query(Company.id).filter(Company.provider_access_granted == True).subquery()
+
+        total_requests = db.query(RequestLog).filter(RequestLog.company_id.in_(accessible_companies)).count()
+        total_attacks = db.query(RequestLog).filter(RequestLog.company_id.in_(accessible_companies), RequestLog.is_attack == True).count()
         
         # Group by company
         company_stats = db.query(
@@ -63,9 +83,10 @@ def get_dashboard_stats(client_id: Optional[int] = None, current_user: User = De
             func.count(RequestLog.id).label('total'),
             func.sum(RequestLog.is_attack).label('attacks')
         ).outerjoin(RequestLog, Company.id == RequestLog.company_id)\
+         .filter(Company.provider_access_granted == True)\
          .group_by(Company.id).all()
         
-        recent_logs = db.query(RequestLog, Company.name).join(Company).order_by(RequestLog.timestamp.desc()).limit(20).all()
+        recent_logs = db.query(RequestLog, Company.name).join(Company).filter(Company.provider_access_granted == True).order_by(RequestLog.timestamp.desc()).limit(20).all()
         
         return {
             "role": "PROVIDER",

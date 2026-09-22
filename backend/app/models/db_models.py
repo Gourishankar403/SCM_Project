@@ -8,6 +8,7 @@ class Company(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
     domain = Column(String, unique=True, index=True)
+    provider_access_granted = Column(Boolean, default=True)
 
     users = relationship("User", back_populates="company")
     requests = relationship("RequestLog", back_populates="company")
