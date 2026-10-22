@@ -14,6 +14,7 @@ class Company(Base):
 
     users = relationship("User", back_populates="company")
     requests = relationship("RequestLog", back_populates="company")
+    incidents = relationship("IncidentAlert", back_populates="company")
 
 class User(Base):
     __tablename__ = "users"
@@ -38,3 +39,18 @@ class RequestLog(Base):
     confidence = Column(Float, nullable=True)
 
     company = relationship("Company", back_populates="requests")
+
+class IncidentAlert(Base):
+    __tablename__ = "incident_alerts"
+    id = Column(Integer, primary_key=True, index=True)
+    incident_code = Column(String, default="INC-8942")
+    company_id = Column(Integer, ForeignKey("companies.id"))
+    threat_type = Column(String)
+    status = Column(String, default="AUTOMATIC_RESPONSE_SENT")
+    details = Column(String)
+    mitigation = Column(String)
+    firewall_rule = Column(String)
+    timestamp = Column(DateTime, default=datetime.datetime.utcnow)
+    acknowledged = Column(Boolean, default=False)
+
+    company = relationship("Company", back_populates="incidents")
