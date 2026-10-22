@@ -434,6 +434,7 @@ The official `KDDTest+` benchmark split introduces 17 novel zero-day attack subt
 A rigorous scientific evaluation must address where the system falls short:
 - **Missed Attacks (Attack Recall of 69.00%)**: The confusion matrix reveals 3,978 False Negatives (FN). These missed attacks represent advanced low-footprint attack subtypes (such as stealthy user-to-root privilege escalations and novel SNMP scans) that exhibit statistical characteristics virtually indistinguishable from legitimate administrative traffic. In a production SOC defense-in-depth architecture, these low-volume stealth events must be caught by secondary host-based intrusion detection agents (HIDS) and database activity monitors.
 - **Normal Precision of 70.31%**: Out of 13,397 flows predicted as normal, 3,978 were stealthy attacks, yielding a Normal Precision of 70.31% ($9,419 / 13,397$). This asymmetry is a direct consequence of setting the decision threshold to prioritize attack precision: the system deliberately accepts false negatives to eliminate false positive business disruption.
+- **Encrypted Telemetry and Payload Obfuscation Blind Spots**: The feature extraction pipeline depends on unencrypted HTTP request text and transport flow statistics. In architectures enforcing end-to-end TLS 1.3 encryption without perimeter SSL termination proxies, deep payload inspection is blind, forcing the Log Analyzer to rely strictly on TCP flow metadata (packet durations, byte volumes, port flags), which reduces detection capability against obfuscated web payloads (such as multi-layer hex-encoded SQL injections or polyglot scripts).
 
 ---
 
@@ -441,7 +442,7 @@ A rigorous scientific evaluation must address where the system falls short:
 
 In addition to network flow telemetry, SentinelAI was evaluated on web application HTTP attack vectors using the CSIC 2010 dataset [5], summarized in Table 10.3:
 
-#### Table 10.4: Web Application Threat Detection Performance (CSIC 2010 HTTP Corpus)
+#### Table 10.3: Web Application Threat Detection Performance (CSIC 2010 HTTP Corpus)
 
 | Attack Category Evaluated | Test Samples Evaluated | Detected Malicious | Detection Rate (Recall) | Sample Payload Signature Tested |
 | :--- | :--- | :--- | :--- | :--- |
