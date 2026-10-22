@@ -59,21 +59,19 @@ The operational motivation for SentinelAI is driven by three critical challenges
 
 ## 4. PROBLEM STATEMENT
 
-Conventional cybersecurity incident management architectures suffer from structural latency, alert flooding, and a complete decoupling of detection from remediation. The operational problem is formally defined as follows:
+Contemporary Security Operations Centers (SOCs) are impaired by human-triage latency (30–45 minutes), alert fatigue (>70% false alarms), and passive detection systems that fail to execute automated containment.
 
-Let $T$ represent an incoming stream of heterogeneous network telemetry events, where each event $e_i \in T$ comprises an HTTP verb, uniform resource identifier (URI), request headers, body payload, and client IP address. Let $C$ represent a multi-tenant cloud organization set with sovereign privacy constraints $P_c \in \{0, 1\}$.
-
-The challenge is to design and implement an autonomous, closed-loop state machine $S(e_i)$ that satisfies the following mapping:
+Formally, given a streaming telemetry set $T$ of events $e_i = (\text{verb, URI, headers, payload, IP})$ and tenant privacy policies $P_c \in \{0, 1\}$, the engineering objective is to construct an autonomous, closed-loop state machine $S(e_i)$ satisfying:
 
 $$S(e_i) \to (A, R, N)$$
 
-Subject to the following operational constraints:
-1. **Classification Accuracy & Precision**: The classifier must classify $e_i$ into normal ($y=0$) or malicious ($y=1$) with attack precision $P(y=1 | \hat{y}=1) \ge 0.95$ and normal recall $R(y=0 | \hat{y}=0) \ge 0.95$, maintaining generalization against unseen zero-day exploit variants.
-2. **Autonomous Mitigation Synthesis ($A$)**: If $\hat{y}=1$, the system must automatically derive the Common Weakness Enumeration ($CWE \in \text{CWE-89, CWE-79, CWE-22}$) and synthesize an executable Linux firewall rule ($R = \text{"iptables -A INPUT -s } IP \text{ -j DROP"}$) without human intervention.
-3. **Latency Bound**: The total closed-loop execution latency must satisfy:
-   $$t_{\text{containment}} = t_{\text{analysis}} + t_{\text{intel}} + t_{\text{investigation}} + t_{\text{mitigation}} + t_{\text{report}} < 1.0\text{ second}$$
-4. **Privacy Sovereignty ($N$)**: Tenant alerts $N$ must be synchronized in real-time, while access to client payloads is strictly gated by client-controlled consent toggles $P_c$.
-5. **Configuration Integrity**: All software artifacts, models, datasets, and pipelines must be governed under formal Software Configuration Management (IEEE 828-2012) with 100% CI/CD regression verification.
+Where $A$ denotes root-cause vulnerability analysis, $R$ denotes synthesized perimeter firewall rules, and $N$ denotes tenant security notifications, subject to five operational constraints:
+
+1. **Detection Precision**: Attack precision $P \ge 95\%$ and normal recall $R \ge 95\%$ on unseen zero-day exploit variants.
+2. **Autonomous Remediation ($R$)**: Dynamic synthesis of valid, executable Linux `iptables` drop rules without human intervention.
+3. **Latency Bound**: Total end-to-end containment latency $t_{\text{containment}} < 1.0\text{ second}$.
+4. **Tenant Privacy Sovereignty ($N$)**: Tenant alert synchronization with strict payload isolation enforced by client-side consent toggles $P_c$.
+5. **Configuration Integrity**: IEEE 828-2012 SCM governance with 100% automated CI/CD regression verification.
 
 ---
 
