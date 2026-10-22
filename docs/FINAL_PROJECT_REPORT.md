@@ -541,6 +541,11 @@ Table 11.1 maps each of the 5 project objectives established in Section 7 to its
 * **Direct SIEM Integration**: Ingest standard Syslog (RFC 5424) and Common Event Format (CEF) feeds directly from Wazuh, Splunk, and Elastic SIEM.
 * **Reinforcement Learning from Human Feedback (RLHF)**: Incorporate analyst override feedback to continuously fine-tune policy synthesis.
 * **Kubernetes Ingress Filtering**: Extend the Mitigation Agent to synthesize dynamic Kubernetes NetworkPolicies and Envoy proxy filter rules for cloud-native container workloads.
+* **eBPF-Based Kernel-Level Packet Interception**: Replace user-space firewall command spawning (`iptables`) with Extended Berkeley Packet Filter (eBPF) XDP (eXpress Data Path) hooks running directly in the Linux kernel network driver, enabling line-rate sub-microsecond packet drops before OS network stack memory allocation.
+* **Federated Threat Intelligence and Privacy-Preserving Learning**: Implement Federated Learning across tenant enclaves using Differential Privacy (DP), enabling tenant organizations to collaboratively train gradient-boosted anomaly models and distribute novel zero-day signatures without exposing private network payloads or internal topology.
+* **Graph Neural Network (GNN) Kill-Chain Reconstruction**: Incorporate Graph Convolutional Networks (GCN) into the Investigation Agent to map distributed lateral movement, privilege escalations, and exfiltration paths across multi-host environments into holistic cyber kill-chains rather than treating telemetry as isolated network flows.
+* **Automated Canary Pre-Flight Rule Verification**: Implement an automated pre-flight testing sandbox that simulates synthetic transactions against newly synthesized firewall policies before perimeter enforcement, preventing inadvertent service disruption to legitimate partner APIs and critical business dependencies.
+* **GitOps-Driven Infrastructure-as-Code (IaC) Containment Synchronization**: Integrate the Mitigation Agent with GitOps workflows (e.g., ArgoCD, Terraform), committing synthesized perimeter access control lists (ACLs) directly into version-controlled infrastructure repositories to maintain an immutable SCM audit trail with automated rollback capabilities.
 
 ---
 
