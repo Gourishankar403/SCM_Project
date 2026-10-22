@@ -396,7 +396,7 @@ const Dashboard = () => {
         {isActualClient && (
           <div className="bg-zinc-900/70 border border-white/10 rounded-3xl p-8 shadow-2xl backdrop-blur-3xl animate-slide-up">
             <h2 className="text-base font-bold text-white uppercase tracking-widest mb-8">Manage Permissions</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               
               <div className="flex justify-between items-center bg-zinc-800/80 p-6 rounded-2xl border border-white/10 shadow-inner">
                 <div>
@@ -429,23 +429,6 @@ const Dashboard = () => {
                   className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${data.share_signatures ? 'bg-emerald-500' : 'bg-zinc-600'}`}
                 >
                   <span className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${data.share_signatures ? 'translate-x-7' : 'translate-x-1'}`} />
-                </button>
-              </div>
-
-              <div className="flex justify-between items-center bg-zinc-800/80 p-6 rounded-2xl border border-white/10 shadow-inner">
-                <div>
-                  <h3 className="font-bold text-white flex items-center gap-3 mb-2 text-lg">
-                    {data.auto_mitigation ? <Unlock className="w-6 h-6 text-emerald-400" strokeWidth={2}/> : <Lock className="w-6 h-6 text-red-400" strokeWidth={2}/>}
-                    Auto Mitigation
-                  </h3>
-                  <p className="text-sm text-zinc-400 font-medium">Allow AI to block threats automatically.</p>
-                </div>
-                <button 
-                  onClick={() => togglePermission('auto_mitigation')} 
-                  disabled={permissionToggling}
-                  className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${data.auto_mitigation ? 'bg-emerald-500' : 'bg-zinc-600'}`}
-                >
-                  <span className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${data.auto_mitigation ? 'translate-x-7' : 'translate-x-1'}`} />
                 </button>
               </div>
 
