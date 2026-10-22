@@ -17,6 +17,7 @@ const Dashboard = () => {
   const [triggeringIncident, setTriggeringIncident] = useState(false);
   const [incidentDispatchedNotice, setIncidentDispatchedNotice] = useState("");
   const [dismissedAlertId, setDismissedAlertId] = useState(null);
+  const [isDispatched, setIsDispatched] = useState(false);
   
   // Time-series data for the moving graph
   const [timeSeries, setTimeSeries] = useState([]);
@@ -163,6 +164,7 @@ const Dashboard = () => {
       setIncidentDispatchedNotice(
         `Dispatched ${res.incident_code} to ${res.target_domain} - Automated Mitigation Deployed!`
       );
+      setIsDispatched(true);
       
       // Update local state immediately for instant visual feedback
       if (data && data.role === 'PROVIDER') {
@@ -381,10 +383,34 @@ const Dashboard = () => {
                 <button
                   onClick={handleTriggerIncident}
                   disabled={triggeringIncident}
-                  className="px-6 py-3 bg-red-600 hover:bg-red-500 disabled:bg-zinc-700 text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-red-900/50 flex items-center gap-2 cursor-pointer w-full sm:w-auto justify-center"
+                  className={`px-6 py-3 text-xs font-bold uppercase tracking-widest rounded-xl transition-all flex items-center gap-2.5 cursor-pointer w-full sm:w-auto justify-center ${
+                    isDispatched
+                      ? "bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/40 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+                      : triggeringIncident
+                      ? "bg-red-800 text-white/80 border border-red-700/50 cursor-wait"
+                      : "bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-900/50"
+                  }`}
                 >
-                  <Zap className={`w-4 h-4 ${triggeringIncident ? 'animate-spin' : ''}`} />
-                  {triggeringIncident ? "Dispatching Response..." : "Dispatch Response"}
+                  {isDispatched ? (
+                    <>
+                      <span className="relative flex h-2 w-2">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                      </span>
+                      <CheckCircle className="w-4 h-4 text-emerald-400" />
+                      <span>Response Dispatched</span>
+                    </>
+                  ) : triggeringIncident ? (
+                    <>
+                      <Zap className="w-4 h-4 animate-spin text-white" />
+                      <span>Dispatching Response...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Zap className="w-4 h-4 text-white" />
+                      <span>Dispatch Response</span>
+                    </>
+                  )}
                 </button>
               </div>
 
