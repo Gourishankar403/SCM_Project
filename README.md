@@ -164,9 +164,9 @@ SentinelAI evaluates incoming traffic using trained supervised learning pipeline
 | :--- | :--- | :--- | :--- | :--- |
 | **Normal Traffic (Class 0)** | 0.67 | 0.97 | 0.79 | 9,711 |
 | **Attack Traffic (Class 1)** | **0.97** | 0.64 | 0.77 | 12,833 |
-| **Accuracy** | — | — | **0.78 (78.07%)** | 22,544 |
-| **Macro Average** | 0.82 | 0.80 | 0.78 | 22,544 |
-| **Weighted Average** | 0.84 | 0.78 | 0.78 | 22,544 |
+| **Accuracy** | — | — | **0.8106 (81.06%)** | 22,544 |
+| **Macro Average** | 0.84 (84%) | 0.83 (83%) | 0.81 (81%) | 22,544 |
+| **Weighted Average** | 0.85 (85%) | 0.81 (81%) | 0.81 (81%) | 22,544 |
 
 ### In-Depth Interpretation of Model Performance
 
