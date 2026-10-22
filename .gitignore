@@ -6,3 +6,4 @@ venv/
 backend/models/*.pkl
 dist/
 .DS_Store
+.pytest_cache/
