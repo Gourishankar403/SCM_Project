@@ -384,7 +384,7 @@ const Dashboard = () => {
                   className="px-6 py-3 bg-red-600 hover:bg-red-500 disabled:bg-zinc-700 text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-red-900/50 flex items-center gap-2 cursor-pointer w-full sm:w-auto justify-center"
                 >
                   <Zap className={`w-4 h-4 ${triggeringIncident ? 'animate-spin' : ''}`} />
-                  {triggeringIncident ? "Dispatching Response..." : "Simulate Threat & Dispatch Response"}
+                  {triggeringIncident ? "Dispatching Response..." : "Dispatch Response"}
                 </button>
               </div>
 
