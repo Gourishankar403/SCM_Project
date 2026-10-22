@@ -1,0 +1,116 @@
+import json
+
+notebook = {
+    'cells': [
+        {
+            'cell_type': 'markdown',
+            'metadata': {},
+            'source': ['# SentinelAI Model Training\n', '\n', 'This notebook trains the Machine Learning model used by SentinelAI to classify incoming HTTP requests as either **Normal (0)** or **Attack (1)**.\n', '\n', 'We use the **CSIC 2010 Web Application Attacks** dataset, which contains thousands of real HTTP requests (both clean and malicious).']
+        },
+        {
+            'cell_type': 'code',
+            'execution_count': None,
+            'metadata': {},
+            'outputs': [],
+            'source': ['import pandas as pd\n', 'import numpy as np\n', 'import pickle\n', 'import os\n', 'from sklearn.model_selection import train_test_split\n', 'from sklearn.feature_extraction.text import TfidfVectorizer\n', 'from sklearn.ensemble import RandomForestClassifier\n', 'from sklearn.metrics import classification_report, accuracy_score\n', '\n', 'print("Libraries loaded successfully.")']
+        },
+        {
+            'cell_type': 'markdown',
+            'metadata': {},
+            'source': ['## 1. Load the Dataset\n', 'The dataset is stored in `../csic_database.csv`.']
+        },
+        {
+            'cell_type': 'code',
+            'execution_count': None,
+            'metadata': {},
+            'outputs': [],
+            'source': ['# Read the dataset\n', 'df = pd.read_csv("../csic_database.csv")\n', '\n', '# Display the first few rows\n', 'df.head()']
+        },
+        {
+            'cell_type': 'markdown',
+            'metadata': {},
+            'source': ['## 2. Feature Engineering\n', 'The SentinelAI agent receives the `method`, `url`, and `payload`.\n', 'We combine these into a single text string for TF-IDF Vectorization.']
+        },
+        {
+            'cell_type': 'code',
+            'execution_count': None,
+            'metadata': {},
+            'outputs': [],
+            'source': ['# Handle NaN values safely\n', 'df["Method"] = df["Method"].fillna("")\n', 'df["URL"] = df["URL"].fillna("")\n', 'df["content"] = df["content"].fillna("")\n', '\n', '# Combine features\n', 'df["combined_text"] = df["Method"] + " " + df["URL"] + " " + df["content"]\n', '\n', '# Target labels (Normal vs Anomalous)\n', 'df["label"] = df["Classification"].apply(lambda x: 0 if x.strip() == "Normal" else 1)\n', '\n', 'print("Dataset Shape:", df.shape)\n', 'print(df["label"].value_counts())']
+        },
+        {
+            'cell_type': 'markdown',
+            'metadata': {},
+            'source': ['## 3. TF-IDF Vectorization & Data Splitting']
+        },
+        {
+            'cell_type': 'code',
+            'execution_count': None,
+            'metadata': {},
+            'outputs': [],
+            'source': ['# Initialize TF-IDF\n', 'vectorizer = TfidfVectorizer(max_features=5000, stop_words="english")\n', '\n', '# Transform the text data\n', 'X = vectorizer.fit_transform(df["combined_text"])\n', 'y = df["label"]\n', '\n', '# Split into 80% train, 20% test to prevent data leakage\n', 'X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)\n', '\n', 'print("Training set size:", X_train.shape[0])\n', 'print("Testing set size:", X_test.shape[0])']
+        },
+        {
+            'cell_type': 'markdown',
+            'metadata': {},
+            'source': ['## 4. Train the Random Forest Classifier']
+        },
+        {
+            'cell_type': 'code',
+            'execution_count': None,
+            'metadata': {},
+            'outputs': [],
+            'source': ['# Train a Random Forest model (fast and interpretable)\n', 'model = RandomForestClassifier(n_estimators=50, random_state=42, n_jobs=-1)\n', 'model.fit(X_train, y_train)\n', '\n', 'print("Model training complete.")']
+        },
+        {
+            'cell_type': 'markdown',
+            'metadata': {},
+            'source': ['## 5. Evaluate the Model']
+        },
+        {
+            'cell_type': 'code',
+            'execution_count': None,
+            'metadata': {},
+            'outputs': [],
+            'source': ['# Predict on the test set\n', 'y_pred = model.predict(X_test)\n', '\n', '# Print the evaluation metrics\n', 'print("Accuracy:", accuracy_score(y_test, y_pred))\n', 'print("\\nClassification Report:\\n", classification_report(y_test, y_pred))']
+        },
+        {
+            'cell_type': 'markdown',
+            'metadata': {},
+            'source': ['## 6. Export Model Artifacts\n', 'The trained model and vectorizer are saved as `.pkl` files for the FastAPI application to load.']
+        },
+        {
+            'cell_type': 'code',
+            'execution_count': None,
+            'metadata': {},
+            'outputs': [],
+            'source': ['# Create the models directory if it doesn\'t exist\n', 'os.makedirs("models", exist_ok=True)\n', '\n', 'with open("models/model.pkl", "wb") as f:\n', '    pickle.dump(model, f)\n', '\n', 'with open("models/vectorizer.pkl", "wb") as f:\n', '    pickle.dump(vectorizer, f)\n', '\n', 'print("Artifacts successfully saved to models/")']
+        }
+    ],
+    'metadata': {
+        'kernelspec': {
+            'display_name': 'Python 3',
+            'language': 'python',
+            'name': 'python3'
+        },
+        'language_info': {
+            'codemirror_mode': {
+                'name': 'ipython',
+                'version': 3
+            },
+            'file_extension': '.py',
+            'mimetype': 'text/x-python',
+            'name': 'python',
+            'nbconvert_exporter': 'python',
+            'pygments_lexer': 'ipython3',
+            'version': '3.10.0'
+        }
+    },
+    'nbformat': 4,
+    'nbformat_minor': 4
+}
+
+with open('backend/SentinelAI_Model_Training.ipynb', 'w') as f:
+    json.dump(notebook, f, indent=2)
+
+print('Notebook created successfully.')

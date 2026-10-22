@@ -9,6 +9,8 @@ class Company(Base):
     name = Column(String, index=True)
     domain = Column(String, unique=True, index=True)
     provider_access_granted = Column(Boolean, default=True)
+    share_signatures = Column(Boolean, default=True)
+    auto_mitigation = Column(Boolean, default=False)
 
     users = relationship("User", back_populates="company")
     requests = relationship("RequestLog", back_populates="company")

@@ -11,6 +11,8 @@ router = APIRouter(prefix="/dashboard", tags=["dashboard"])
 
 class PermissionToggle(BaseModel):
     allow_provider: bool
+    share_signatures: bool
+    auto_mitigation: bool
 
 @router.post("/permissions")
 def toggle_permissions(payload: PermissionToggle, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
@@ -19,8 +21,15 @@ def toggle_permissions(payload: PermissionToggle, current_user: User = Depends(g
     
     company = db.query(Company).filter(Company.id == current_user.company_id).first()
     company.provider_access_granted = payload.allow_provider
+    company.share_signatures = payload.share_signatures
+    company.auto_mitigation = payload.auto_mitigation
     db.commit()
-    return {"status": "success", "provider_access_granted": company.provider_access_granted}
+    return {
+        "status": "success", 
+        "provider_access_granted": company.provider_access_granted,
+        "share_signatures": company.share_signatures,
+        "auto_mitigation": company.auto_mitigation
+    }
 
 @router.get("/stats")
 def get_dashboard_stats(client_id: Optional[int] = None, current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
@@ -53,6 +62,8 @@ def get_dashboard_stats(client_id: Optional[int] = None, current_user: User = De
             "company_name": company.name,
             "company_domain": company.domain,
             "provider_access_granted": company.provider_access_granted,
+            "share_signatures": company.share_signatures,
+            "auto_mitigation": company.auto_mitigation,
             "stats": {
                 "total_requests": total_requests,
                 "total_attacks": total_attacks,

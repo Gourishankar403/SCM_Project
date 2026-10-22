@@ -3,16 +3,14 @@ import random
 import time
 import threading
 
-API_URL = "http://localhost:8002/analyze/"
+API_URL = "http://localhost:8004/analyze/"
 DOMAINS = ["techcorp.com", "finserve.com"]
 
 # Use actual URLs from the CSIC dataset so the ML model recognizes them as Healthy (0)
 healthy_requests = [
     {"method": "GET", "url": "http://localhost:8080/tienda1/index.jsp HTTP/1.1", "user_agent": "Mozilla/5.0", "payload": ""},
     {"method": "GET", "url": "http://localhost:8080/tienda1/publico/anadir.jsp?id=3&nombre=Vino+Rioja&precio=100&cantidad=55&B1=A%F1adir+al+carrito HTTP/1.1", "user_agent": "Mozilla/5.0", "payload": ""},
-    {"method": "POST", "url": "http://localhost:8080/tienda1/publico/anadir.jsp HTTP/1.1", "user_agent": "Mozilla/5.0", "payload": "id=3&nombre=Vino+Rioja&precio=100&cantidad=55&B1=A%F1adir+al+carrito"},
-    {"method": "GET", "url": "http://localhost:8080/tienda1/publico/autenticar.jsp HTTP/1.1", "user_agent": "Mozilla/5.0", "payload": ""},
-    {"method": "POST", "url": "http://localhost:8080/tienda1/publico/autenticar.jsp HTTP/1.1", "user_agent": "Mozilla/5.0", "payload": "modo=entrar&login=carlos&pwd=carlos&remember=on"}
+    {"method": "POST", "url": "http://localhost:8080/tienda1/publico/anadir.jsp HTTP/1.1", "user_agent": "Mozilla/5.0", "payload": "id=3&nombre=Vino+Rioja&precio=100&cantidad=55&B1=A%F1adir+al+carrito"}
 ]
 
 # Real attack vectors (the model will flag unknown/suspicious as 1)
@@ -28,8 +26,8 @@ def send_traffic():
         num_requests = random.randint(2, 6)
         
         for _ in range(num_requests):
-            # 5% attacks to make the dashboard look highly realistic (mostly green!)
-            is_attack = random.random() < 0.05 
+            # 0.5% attacks to make the threats really really tiny
+            is_attack = random.random() < 0.005
             req = random.choice(attack_requests) if is_attack else random.choice(healthy_requests)
             domain = random.choice(DOMAINS)
             
