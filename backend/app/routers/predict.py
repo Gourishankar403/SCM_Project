@@ -34,7 +34,7 @@ def analyze_request(payload: RequestPayload, db: Session = Depends(get_db)):
         user_agent=payload.user_agent,
         payload=payload.payload,
         is_attack=is_attack,
-        confidence=0.99  # Mock confidence for now
+        confidence=0.99
     )
     db.add(log_entry)
     db.commit()
@@ -42,6 +42,11 @@ def analyze_request(payload: RequestPayload, db: Session = Depends(get_db)):
 
     return {
         "status": "analyzed", 
-        "is_attack": is_attack, 
+        "is_attack": is_attack,
+        "severity": final_state.get("severity"),
+        "threat_intel": final_state.get("threat_intel_summary"),
+        "investigation": final_state.get("investigation_findings"),
+        "mitigation": final_state.get("mitigation_action"),
+        "firewall_rule": final_state.get("firewall_rule"),
         "incident_report": final_state.get("incident_report")
     }
