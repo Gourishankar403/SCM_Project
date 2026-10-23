@@ -1,21 +1,21 @@
 # VELLORE INSTITUTE OF TECHNOLOGY
 ### School of Computer Science Engineering and Information Systems
 ### M.Tech (SE) 5 Years Integrated Course
-### SWE403L — Software Configuration Management
+### ISWE403L — Software Configuration Management
 ### Course Project Report
 
-**Slot:** B1+TB1  
+**Slot:** E1+TE1  
 **Title of Project:** SENTINELAI: MULTI-AGENT AUTONOMOUS SECURITY OPERATIONS CENTER (SOC) INCIDENT RESPONSE SYSTEM
 
 **Team Members:**
 
 | S.No | Student Name | Registration Number | SCM Role & CI Ownership |
 | :--- | :--- | :--- | :--- |
-| 1. | **Gouri Shankar Binu** | 24MIS0137 | SCM Coordinator, Orchestration Layer (CI-01, CI-04, CI-08) |
+| 1. | **Ojaswita Dhar** | 24MIS0131 | Build & Test Owner (CI-03, CI-07, CI-09) |
 | 2. | **Arjun S** | 24MIS0128 | Documentation & Release Owner (CI-02, CI-05, CI-06) |
-| 3. | **Ojaswita Dhar** | 24MIS0131 | Build & Test Owner (CI-03, CI-07, CI-09) |
+| 3. | **Gouri Shankar Binu** | 24MIS0137 | SCM Coordinator, Orchestration Layer (CI-01, CI-04, CI-08) |
 
-**Faculty Name:** Dr. Sweetlin Hemalatha E
+**Faculty Name:** Dr. TamilPriya
 
 ---
 
@@ -40,16 +40,16 @@
 
 # DECLARATION
 
-We hereby declare that the report entitled **"SENTINELAI: MULTI-AGENT AUTONOMOUS SECURITY OPERATIONS CENTER (SOC) INCIDENT RESPONSE SYSTEM"** submitted by us, for the Course Code **SWE403L** and Course Name **Software Configuration Management** to Vellore Institute of Technology is a record of bonafide work carried out by us under the supervision of **Dr. Sweetlin Hemalatha E**.
+We hereby declare that the report entitled **"SENTINELAI: MULTI-AGENT AUTONOMOUS SECURITY OPERATIONS CENTER (SOC) INCIDENT RESPONSE SYSTEM"** submitted by us, for the Course Code **ISWE403L** and Course Name **Software Configuration Management** to Vellore Institute of Technology is a record of bonafide work carried out by us under the supervision of **Dr. TamilPriya**.
 
 We further declare that the work reported in this report has not been submitted and will not be submitted, either in part or in full, for any other courses in this institute or any other institute or university.
 
 **Place:** Vellore  
 **Date:** 23-10-2026
 
-**Signature of Candidate 1:** Gouri Shankar Binu (24MIS0137)  
-**Signature of Candidate 2:** Arjun S (24MIS0128)  
-**Signature of Candidate 3:** Ojaswita Dhar (24MIS0131)
+**Signature of the Candidate 1:** Ojaswita Dhar (24MIS0131)  
+**Signature of the Candidate 2:** Arjun S (24MIS0128)  
+**Signature of the Candidate 3:** Gouri Shankar Binu (24MIS0137)
 
 ---
 
